@@ -69,6 +69,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     entities.extend([
         PstrykEnergyMeterPowerSensor(coordinator, "activePower_0", "Active Power Total")
     ])
+    entities.extend([
+        PstrykEnergyMeterEnergySensor(coordinator, f"forwardActiveEnergy_{n}", f"Forward Active Energy {n}") for n in range(1, 4)
+    ])
+    entities.extend([
+        PstrykEnergyMeterEnergySensor(coordinator, "forwardActiveEnergy_0", "Forward Active Energy Total")
+    ])
+    entities.extend([
+        PstrykEnergyMeterEnergySensor(coordinator, f"reverseActiveEnergy_{n}", f"Reverse Active Energy {n}") for n in range(1, 4)
+    ])
+    entities.extend([
+        PstrykEnergyMeterEnergySensor(coordinator, "reverseActiveEnergy_0", "Reverse Active Energy Total")
+    ])
 
     async_add_entities(entities)
     return True
@@ -158,6 +170,7 @@ class PstrykEnergyMeterVoltageSensor(PstrykEnergyMeterBaseSensor):
         self._attr_device_class = SensorDeviceClass.VOLTAGE
         self._attr_native_unit_of_measurement = UnitOfElectricPotential.VOLT
         self._attr_state_class = SensorStateClass.MEASUREMENT
+        self._attr_suggested_display_precision = 1
 
     @property
     def native_value(self):
@@ -190,3 +203,18 @@ class PstrykEnergyMeterCurrentSensor(PstrykEnergyMeterBaseSensor):
     @property
     def native_value(self):
         return self._coordinator.data[self.src].get("value")
+
+
+class PstrykEnergyMeterEnergySensor(PstrykEnergyMeterBaseSensor):
+    """Power sensor"""
+
+    def __init__(self, coordinator: DataUpdateCoordinator, key: str, name: str) -> None:
+        super().__init__(coordinator, key, key, name)
+        self._attr_device_class = SensorDeviceClass.ENERGY
+        self._attr_native_unit_of_measurement = UnitOfPower.KWH
+        self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+        self._attr_suggested_display_precision = 3
+
+    @property
+    def native_value(self):
+        return self._coordinator.data[self.src].get("value") / 1000
