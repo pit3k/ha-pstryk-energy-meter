@@ -212,7 +212,7 @@ class PstrykEnergyMeterEnergySensor(PstrykEnergyMeterBaseSensor):
     def __init__(self, coordinator: DataUpdateCoordinator, key: str, name: str) -> None:
         super().__init__(coordinator, key, key, name)
         self._attr_device_class = SensorDeviceClass.ENERGY
-        self._attr_native_unit_of_measurement = UnitOfPower.KWH
+        self._attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
         self._attr_state_class = SensorStateClass.TOTAL_INCREASING
         self._attr_suggested_display_precision = 3
 
