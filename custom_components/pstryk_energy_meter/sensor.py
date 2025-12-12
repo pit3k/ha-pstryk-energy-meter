@@ -148,7 +148,8 @@ class PstrykEnergyMeterBaseSensor(SensorEntity):
         _LOGGER.debug("setting up %s", sid)
         self._coordinator = coordinator
         self.src = src
-        self._attr_name = f"{DEFAULT_NAME} {name}"
+        self._attr_has_entity_name = True
+        self._attr_name = name
         self._attr_unique_id = f"{self._coordinator.entry.entry_id}_{sid}"
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_device_info = self._coordinator.device_info
