@@ -13,12 +13,20 @@ import requests
 
 from .const import DOMAIN
 
-
 _LOGGER = logging.getLogger(__name__)
+
+CONF_UPDATE_INTERVAL = "update_interval"
+DEFAULT_UPDATE_INTERVAL = 30
 
 SCHEMA = vol.Schema({
     vol.Required(CONF_NAME): str,
     vol.Required(CONF_HOST): str,
+})
+
+OPTIONS_SCHEMA = vol.Schema({
+    vol.Optional(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): vol.All(
+        vol.Coerce(int), vol.Range(min=5, max=3600)
+    ),
 })
 
 
@@ -66,3 +74,27 @@ class PstrykEnergyMeterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         name = user_input[CONF_NAME]
         return self.async_create_entry(title=product, data=user_input)
+
+    @staticmethod
+    def async_get_options_flow(config_entry):
+        return PstrykEnergyMeterOptionsFlow(config_entry)
+
+
+class PstrykEnergyMeterOptionsFlow(config_entries.OptionsFlow):
+    """Options flow for Pstryk Energy Meter"""
+
+    def __init__(self, config_entry):
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        if user_input is not None:
+            return self.async_create_options_entry(data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=self.add_suggested_values_to_schema(
+                OPTIONS_SCHEMA,
+                self.config_entry.options,
+            ),
+        )
+

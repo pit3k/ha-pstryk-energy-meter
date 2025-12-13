@@ -22,6 +22,7 @@ import requests
 
 
 from .const import DOMAIN, MANUFACTURER, DEFAULT_NAME, HOME_URL
+from .config_flow import CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -92,11 +93,17 @@ class PstrykEnergyMeterDataUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, info) -> None:
         _LOGGER.debug("initializing coordinator: %s", entry)
+        
+        # Get update interval from options, with default fallback
+        update_interval_seconds = entry.options.get(
+            CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL
+        )
+        
         super().__init__(
             hass,
             _LOGGER,
             name=entry.title,
-            update_interval=timedelta(seconds=30) #TODO# User configurable update interval with lower bound
+            update_interval=timedelta(seconds=update_interval_seconds)
         )
 
         self.entry = entry
