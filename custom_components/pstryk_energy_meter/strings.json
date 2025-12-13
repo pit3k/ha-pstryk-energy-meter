@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Pstryk Energy Meter",
+        "description": "Enter the device name and hostname/IP address of your Pstryk Energy Meter",
+        "data": {
+          "name": "Device name",
+          "host": "Hostname or IP address"
+        }
+      }
+    },
+    "error": {
+      "base": "Failed to connect to meter"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling Options",
+        "description": "Configure polling interval for sensor updates",
+        "data": {
+          "update_interval": "Update interval (seconds)"
+        },
+        "data_description": {
+          "update_interval": "How often to poll the device for new readings (5-3600 seconds)"
+        }
+      }
+    }
+  }
+}
