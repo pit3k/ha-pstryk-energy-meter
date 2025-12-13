@@ -28,7 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not entry.options:
         hass.config_entries.async_update_entry(entry, options={"update_interval": 30})
     
-    entry.async_on_change_listener(async_reload_entry)
+    entry.add_update_listener(async_reload_entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
